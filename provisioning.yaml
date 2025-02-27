@@ -30,12 +30,15 @@
         enabled: yes
       when: ansible_distribution == "Ubuntu"
     
-      - name: Deploy ntp agent conf on centos
+    - name: Deploy ntp agent conf on centos
       ansible.builtin.template:
         src: templates/ntpconf_centos
         dest: /etc/chrony.conf
         backup: yes
       when: ansible_distribution == "CentOS"
+      notify:
+        - Restart service on CentOS
+
 
     - name: Deploy ntp agent conf on ubuntu
       ansible.builtin.template:
@@ -43,7 +46,10 @@
         dest: /etc/ntpsec/ntp.conf
         backup: yes
       when: ansible_distribution == "Ubuntu"
+      notify:
+        - Restart service on Ubuntu
 
+  handlers:
     - name: Restart service on CentOS
       service:
         name: chronyd
